@@ -1,0 +1,27 @@
+{
+  "name": "YamahaAudioController",
+  "version": "1.0.0",
+  "description": "Electron app for Yamaha RV-V6A remote control",
+  "license": "ISC",
+  "author": "djlastnight",
+  "type": "commonjs",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "build": {
+    "appId": "com.yamaha.controller",
+    "win": {
+      "target": "nsis"
+    }
+  },
+  "devDependencies": {
+    "electron": "^44.2.0",
+    "electron-builder": "^26.15.3"
+  },
+  "dependencies": {
+    "electron-window-state": "^5.0.3"
+  }
+}

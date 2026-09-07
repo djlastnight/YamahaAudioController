@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yamaha RX-V6A Sidebar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            text-align: center;
+            margin: 0;
+            padding: 10px;
+            user-select: none;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            background: #1e1e1e;
+            padding: 12px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            box-sizing: border-box;
+        }
+
+        h2 {
+            margin: 5px 0 12px 0;
+            color: #ff9800;
+            font-size: 18px;
+        }
+
+        .section {
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+        }
+
+        input[type="text"] {
+            width: 85%;
+            padding: 7px;
+            margin-bottom: 3px;
+            background: #2d2d2d;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        button {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 9px 14px;
+            margin: 3px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        button.active {
+            background-color: #ff9800 !important;
+            color: black !important;
+            font-weight: bold;
+            box-shadow: 0 0 8px #ff9800;
+        }
+
+        .power-btn {
+            background-color: #d32f2f;
+        }
+
+        .power-btn:hover {
+            background-color: #f44336;
+        }
+
+        .mute-btn {
+            background-color: #555;
+        }
+
+        .volume-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .volume-container button {
+            flex: 1;
+        }
+
+        .knob-wrapper {
+            position: relative;
+            margin: 8px auto;
+            cursor: ns-resize;
+            touch-action: none;
+        }
+
+        #knobWrapper {
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle, #181818 0%, #0d0d0d 70%);
+            border: 1px solid #2a2a2a;
+            border-radius: 50%;
+            margin: 10px auto;
+            position: relative;
+            cursor: ns-resize;
+            touch-action: none;
+            box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.9), 0 4px 10px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .knob {
+            background: linear-gradient(145deg, #2a2a2a, #151515);
+            border: 4px solid #383838;
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.9), inset 0 2px 6px rgba(255, 255, 255, 0.08);
+            transform: rotate(-135deg);
+            z-index: 2;
+        }
+
+        #volumeKnob {
+            width: 92px;
+            height: 92px;
+            top: 15px;
+            left: 15px;
+        }
+
+        .knob-indicator {
+            position: absolute;
+            left: 50%;
+            background-color: #ff9800;
+            transform: translateX(-50%);
+            border-radius: 2px;
+            box-shadow: 0 0 8px #ff9800;
+        }
+
+        #volumeKnob .knob-indicator {
+            top: 5px;
+            width: 3px;
+            height: 16px;
+        }
+
+        .neon-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background-color: #333;
+            border-radius: 50%;
+            transition: background-color 0.2s, box-shadow 0.2s;
+        }
+
+        .neon-dot.lit {
+            background-color: #ff9800;
+            box-shadow: 0 0 5px #ff9800, 0 0 8px #ff9800;
+        }
+
+        .tone-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .tone-card {
+            background: #252525;
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid #333;
+            text-align: center;
+        }
+
+        .tone-card label {
+            font-size: 11px;
+            color: #aaa;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .tone-card span {
+            font-weight: bold;
+            color: #ff9800;
+            font-size: 12px;
+        }
+
+        .tone-knob-wrapper {
+            width: 80px;
+            height: 80px;
+            margin: 3px auto;
+        }
+
+        .tone-knob {
+            width: 56px;
+            height: 56px;
+            top: 8px;
+            left: 8px;
+        }
+
+        .tone-knob .knob-indicator {
+            top: 3px;
+            width: 2px;
+            height: 10px;
+        }
+
+        #volDisplay {
+            font-weight: bold;
+            color: #ff9800;
+            font-size: 15px;
+        }
+
+        .visualizer-container {
+            background: #151515;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 6px;
+            margin-top: 5px;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 45px;
+            background: #0d0d0d;
+            border-radius: 4px;
+        }
+
+        .speakers-status {
+            display: flex;
+            justify-content: center;
+            margin-top: 6px;
+        }
+
+        .spk-badge {
+            background: rgba(76, 175, 80, 0.15);
+            border: 1px solid #4caf50;
+            border-radius: 4px;
+            padding: 6px 16px;
+            font-size: 11px;
+            color: #4caf50;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 0 6px rgba(76, 175, 80, 0.3);
+            width: 100%;
+            letter-spacing: 0.5px;
+            transition: 0.3s;
+        }
+
+        .spk-badge.no-signal {
+            background: rgba(158, 158, 158, 0.08);
+            border: 1px solid #444;
+            color: #777;
+            box-shadow: none;
+        }
+
+        .dsp-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+            margin-top: 5px;
+        }
+
+        .dsp-grid button {
+            width: 100%;
+            margin: 0;
+            padding: 8px 4px;
+            font-size: 11px;
+        }
+
+        #customTitleBar {
+            display: none;
+            height: 32px;
+            background: #181818;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 8px;
+            -webkit-app-region: drag;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            border-bottom: 1px solid #333;
+            margin: -12px -12px 10px -12px;
+        }
+
+        #customTitleBar.unlocked {
+            display: flex;
+        }
+
+        .title-text {
+            font-size: 12px;
+            color: #ff9800;
+            font-weight: bold;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 4px;
+        }
+
+        .window-controls button {
+            -webkit-app-region: no-drag;
+            background: transparent;
+            border: none;
+            color: #aaa;
+            width: 28px;
+            height: 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .window-controls button:hover {
+            background: #333;
+            color: #fff;
+        }
+
+        .window-controls button.close-btn:hover {
+            background: #e81123;
+            color: #fff;
+        }
+
+        .neon-dot.lit.color-green {
+            background-color: #4caf50;
+            box-shadow: 0 0 5px #4caf50, 0 0 8px #4caf50;
+        }
+
+        .neon-dot.lit.color-blue {
+            background-color: #2196f3;
+            box-shadow: 0 0 5px #2196f3, 0 0 8px #2196f3;
+        }
+
+        .neon-dot.lit.color-red {
+            background-color: #f44336;
+            box-shadow: 0 0 5px #f44336, 0 0 8px #f44336;
+        }
+
+        #volumeKnob .knob-indicator.color-green {
+            background-color: #4caf50;
+            box-shadow: 0 0 8px #4caf50;
+        }
+
+        #volumeKnob .knob-indicator.color-blue {
+            background-color: #2196f3;
+            box-shadow: 0 0 8px #2196f3;
+        }
+
+        #volumeKnob .knob-indicator.color-red {
+            background-color: #f44336;
+            box-shadow: 0 0 8px #f44336;
+        }
+
+        #refreshBtn {
+            position: fixed;
+            top: 17px;
+            right: 17px;
+            z-index: 9999;
+            background: rgba(30, 30, 30, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18x;
+            backdrop-filter: blur(5px);
+            transition: all 0.2s ease;
+        }
+
+        #refreshBtn:hover {
+            background: rgba(50, 50, 50, 1);
+            border-color: #ff9800;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container" style="position: relative;">
+        <button id="refreshBtn" onclick="location.reload()" title="Refresh Page (Ctrl+R)">↻</button>
+        <div id="customTitleBar">
+            <span class="title-text">Yamaha RX-V6A (Unlocked)</span>
+            <div class="window-controls">
+                <button onclick="require('electron').ipcRenderer.send('window-min')">🗕</button>
+                <button onclick="require('electron').ipcRenderer.send('window-max')">🗖</button>
+                <button class="close-btn" onclick="require('electron').ipcRenderer.send('window-close')">✕</button>
+            </div>
+        </div>
+
+        <h2>Yamaha RX-V6A</h2>
+        <div class="section">
+            <input type="text" id="ipAddress" placeholder="Receiver IP address ex: 192.168.1.51">
+        </div>
+
+        <div class="section">
+            <button class="power-btn" onclick="sendCmd('main/setPower?power=on')">Power Control (ON)</button>
+            <button class="power-btn" onclick="sendCmd('main/setPower?power=standby')">Power Off (Standby)</button>
+        </div>
+
+        <div class="section">
+            <label>Volume: <span id="volDisplay">-40.0 dB</span></label>
+
+            <div class="knob-wrapper" id="knobWrapper">
+                <div class="knob" id="volumeKnob">
+                    <div class="knob-indicator"></div>
+                </div>
+            </div>
+
+            <div class="volume-container" style="margin-top: 6px;">
+                <button title="Volume down (Ctrl+ArrowDown)" onmousedown="startVolHold(-1.0)" onmouseup="stopVolHold()"
+                    onttouchstart="startVolHold(-1.0)" ontouchend="stopVolHold()">Volume -</button>
+                <button title="Volume up (Ctrl+ArrowUp)" onmousedown="startVolHold(1.0)" onmouseup="stopVolHold()"
+                    onttouchstart="startVolHold(1.0)" ontouchend="stopVolHold()">Volume +</button>
+            </div>
+            <button id="muteBtn" class="mute-btn" onclick="toggleMute()"
+                style="width: 100%; margin-top: 6px;">Mute</button>
+        </div>
+
+        <div class="section">
+            <label><small><strong>Tone Adjustments</strong></small></label>
+
+            <div class="tone-grid">
+                <div class="tone-card">
+                    <label>Bass: <span id="bassDisplay">0.0 dB</span></label>
+                    <div class="knob-wrapper tone-knob-wrapper" id="bassWrapper" data-type="bass">
+                        <div class="knob tone-knob" id="bassKnob">
+                            <div class="knob-indicator"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tone-card">
+                    <label>Treble: <span id="trebleDisplay">0.0 dB</span></label>
+                    <div class="knob-wrapper tone-knob-wrapper" id="trebleWrapper" data-type="treble">
+                        <div class="knob tone-knob" id="trebleKnob">
+                            <div class="knob-indicator"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tone-card" style="margin-top: 8px;">
+                <label>Subwoofer level: <span id="subDisplay">0.0 dB</span></label>
+                <div class="knob-wrapper tone-knob-wrapper" id="subWrapper" data-type="subwoofer">
+                    <div class="knob tone-knob" id="subKnob">
+                        <div class="knob-indicator"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <label><small><strong>Input select</strong></small></label><br>
+            <button id="input_hdmi1" onclick="selectInput('hdmi1')">HDMI 1</button>
+            <button id="input_hdmi2" onclick="selectInput('hdmi2')">HDMI 2</button>
+            <button id="input_net_radio" onclick="selectInput('net_radio')">Net Radio</button>
+        </div>
+
+        <div class="section">
+            <label><small><strong>DSP Mode</strong></small></label>
+            <div class="dsp-grid">
+                <button id="dsp_pure_direct" onclick="setPureDirect(!isPureDirect)">Pure Direct</button>
+                <button id="dsp_straight" onclick="setDspProgram('straight')">Straight</button>
+                <button id="dsp_dsur" onclick="setDspProgram('surr_decoder')">Surround Decoder</button>
+                <button id="dsp_all_ch_stereo" onclick="setDspProgram('all_ch_stereo')">All Channel Stereo</button>
+            </div>
+        </div>
+
+        <div class="section" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
+            <div class="visualizer-container">
+                <canvas id="vizCanvas" style="display: none;"></canvas>
+                <canvas id="waveCanvas" style="display: none;"></canvas>
+            </div>
+            <div class="speakers-status">
+                <div id="signalInfoBadge" class="spk-badge">SIGNAL: ---</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const CONFIG = {
+            pollIntervalMs: 150,
+            get throttleSend() { return this.pollIntervalMs * 0.8; },
+            get releaseDelay() { return this.pollIntervalMs * 10; }
+        };
+
+        let statusInterval = null;
+        let currentDb = -40.0, currentBass = 0.0, currentTreble = 0.0, currentSub = 0.0;
+        let isMuted = false, currentInput = '', currentDsp = '', isPureDirect = false;
+
+        let signalTextDisplay = "No Signal";
+
+        let isInteractingVol = false;
+        let isInteractingBass = false;
+        let isInteractingTreble = false;
+        let isInteractingSub = false;
+        let isInteractingInput = false;
+        let isInteractingDsp = false;
+
+        let volTimeout = null;
+        let bassTimeout = null;
+        let trebleTimeout = null;
+        let subTimeout = null;
+        let inputTimeout = null;
+        let dspTimeout = null;
+
+        const minDb = -80.5, maxDb = 0.0;
+        const minTone = -6.0, maxTone = 6.0;
+        const minAngle = -135, maxAngle = 135;
+
+        let audioAnalyser = null;
+        let dataArray = null;
+
+        async function startRealAudioCapture() {
+            try {
+                if (audioAnalyser) return;
+
+                const stream = await navigator.mediaDevices.getDisplayMedia({
+                    audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+                    video: { width: 1, height: 1 }
+                });
+
+                const videoTrack = stream.getVideoTracks()[0];
+                if (videoTrack) videoTrack.stop();
+
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+                audioCtx.onerror = (err) => {
+                    console.warn("AudioContext error:", err);
+                    audioAnalyser = null;
+                    dataArray = null;
+                    stopWaveAnimations();
+                    startWaveAnimations();
+                };
+
+                audioCtx.onstatechange = () => {
+                    if (audioCtx.state === 'closed' || audioCtx.state === 'interrupted') {
+                        audioAnalyser = null;
+                        dataArray = null;
+                        stopWaveAnimations();
+                        startWaveAnimations();
+                    }
+                };
+
+                const source = audioCtx.createMediaStreamSource(stream);
+                audioAnalyser = audioCtx.createAnalyser();
+
+                audioAnalyser.fftSize = 8192 * 2;
+                source.connect(audioAnalyser);
+
+                dataArray = new Uint8Array(audioAnalyser.frequencyBinCount);
+
+                stopWaveAnimations();
+                console.log("Attached audio stream!");
+
+            } catch (err) {
+                audioAnalyser = null;
+                dataArray = null;
+            }
+        }
+
+        const canvas = document.getElementById('vizCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const resizeObserver = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                canvas.width = entry.contentRect.width;
+                canvas.height = 45;
+            }
+        });
+        resizeObserver.observe(canvas.parentElement);
+
+        let bars = 40;
+        let barValues = new Array(bars).fill(0);
+        let peakValues = new Array(bars).fill(0);
+        let peakVelocities = new Array(bars).fill(0);
+        let peakHoldTimes = new Array(bars).fill(0);
+
+        function drawVisualizer() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (!audioAnalyser || !dataArray) {
+                document.getElementById('signalInfoBadge').innerText = signalTextDisplay;
+                requestAnimationFrame(drawVisualizer);
+                return;
+            }
+
+            if (audioAnalyser.fftSize !== 8192 * 2) {
+                audioAnalyser.fftSize = 8192 * 2;
+            }
+
+            let barWidth = (canvas.width / bars) - 1;
+
+            try {
+                audioAnalyser.getByteFrequencyData(dataArray);
+            } catch (e) {
+                audioAnalyser = null;
+                dataArray = null;
+                startWaveAnimations();
+                requestAnimationFrame(drawVisualizer);
+                return;
+            }
+
+            const hasRealAudio = !dataArray.every(val => val === 0);
+
+            if (hasRealAudio && signalTextDisplay !== "NO SIGNAL") {
+                if (canvas.style.display === 'none') {
+                    stopWaveAnimations();
+                }
+
+                const bufferLength = audioAnalyser.frequencyBinCount;
+                const sampleRate = audioAnalyser.context.sampleRate;
+                const nyquist = sampleRate / 2;
+
+                const minAudibleFreq = 20;
+                const maxAudibleFreq = Math.min(20000, nyquist);
+
+                const minLog = Math.log10(minAudibleFreq);
+                const maxLog = Math.log10(maxAudibleFreq);
+
+                for (let i = 0; i < bars; i++) {
+                    let fLow = Math.pow(10, minLog + (i / bars) * (maxLog - minLog));
+                    let fHigh = Math.pow(10, minLog + ((i + 1) / bars) * (maxLog - minLog));
+
+                    let floatStart = (fLow / nyquist) * bufferLength;
+                    let floatEnd = (fHigh / nyquist) * bufferLength;
+
+                    let weightedSum = 0;
+                    let totalWeight = 0;
+
+                    let startBin = Math.floor(floatStart);
+                    let endBin = Math.min(Math.ceil(floatEnd), bufferLength);
+
+                    for (let j = startBin; j < endBin; j++) {
+                        let binLeft = j;
+                        let binRight = j + 1;
+
+                        let overlap = Math.max(0, Math.min(binRight, floatEnd) - Math.max(binLeft, floatStart));
+                        if (overlap > 0) {
+                            weightedSum += dataArray[j] * overlap;
+                            totalWeight += overlap;
+                        }
+                    }
+
+                    let avgVal = totalWeight > 0 ? (weightedSum / totalWeight) : 0;
+                    let normalized = Math.min(1, Math.sqrt(avgVal / 255.0));
+
+                    // 0.98 leaave a space for the avg line, using pow in order to increase dynamic here, but keep the max values intact.
+                    let scaledNormalized = 0.98 * Math.pow(normalized, 1.71);
+
+                    barValues[i] += (scaledNormalized - barValues[i]) * 0.45;
+
+                    let barHeight = barValues[i] * canvas.height;
+                    let x = i * (barWidth + 1);
+                    let y = canvas.height - barHeight;
+
+                    // Peak hold
+                    if (barHeight >= peakValues[i]) {
+                        peakValues[i] = barHeight;
+                        peakVelocities[i] = 0;
+                        peakHoldTimes[i] = 50; // Holds for n frames 
+                    } else {
+                        if (peakHoldTimes[i] > 0) {
+                            peakHoldTimes[i]--;
+                        } else {
+                            peakVelocities[i] += 0.005; // Slowly falls
+                            peakValues[i] -= peakVelocities[i];
+
+                            if (peakValues[i] < barHeight) {
+                                peakValues[i] = barHeight;
+                                peakVelocities[i] = 0;
+                            }
+                        }
+                    }
+
+                    let gradient = ctx.createLinearGradient(0, canvas.height, 0, 0);
+                    gradient.addColorStop(0, '#d32f2f');
+                    gradient.addColorStop(0.6, '#ff9800');
+                    gradient.addColorStop(1, '#ffeb3b');
+
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(x, y, barWidth, Math.max(2, barHeight));
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(x, canvas.height - peakValues[i] - 1, barWidth, 1);
+                }
+            } else {
+                if (canvas.style.display !== 'none') {
+                    startWaveAnimations();
+                }
+            }
+
+            document.getElementById('signalInfoBadge').innerText = signalTextDisplay;
+            requestAnimationFrame(drawVisualizer);
+        }
+
+        drawVisualizer();
+
+        function createNeonDotsForWrapper(wrapperId, radius, centerX, centerY) {
+            const wrapper = document.getElementById(wrapperId);
+            if (!wrapper) return;
+            const totalDots = 14;
+            wrapper.querySelectorAll('.neon-dot').forEach(d => d.remove());
+            for (let i = 0; i < totalDots; i++) {
+                let percent = i / (totalDots - 1);
+                let angleDeg = minAngle + percent * (maxAngle - minAngle);
+                let angleRad = (angleDeg - 90) * (Math.PI / 180);
+                let x = centerX + radius * Math.cos(angleRad) - 2;
+                let y = centerY + radius * Math.sin(angleRad) - 2;
+
+                const dot = document.createElement('div');
+                dot.className = 'neon-dot';
+                dot.style.left = `${x}px`;
+                dot.style.top = `${y}px`;
+                dot.dataset.percent = percent;
+                wrapper.appendChild(dot);
+            }
+        }
+
+        function updateNeonDotsForWrapper(wrapperId, percentage) {
+            const wrapper = document.getElementById(wrapperId);
+            if (!wrapper) return;
+
+            let colorClass = 'color-orange';
+            let hexColor = '#ff9800';
+
+            if (wrapperId === 'knobWrapper') {
+                if (percentage > 0.9) {
+                    colorClass = 'color-red';
+                    hexColor = '#f44336';
+                } else if (percentage > 0.7) {
+                    colorClass = 'color-blue';
+                    hexColor = '#2196f3';
+                } else if (percentage > 0.50) {
+                    colorClass = 'color-green';
+                    hexColor = '#4caf50';
+                } else {
+
+                }
+
+                const mainIndicator = document.querySelector('#volumeKnob .knob-indicator');
+                if (mainIndicator) {
+                    mainIndicator.classList.remove('color-green', 'color-blue', 'color-red');
+                    mainIndicator.classList.add(colorClass);
+                }
+
+                const volDisplay = document.getElementById('volDisplay');
+                if (volDisplay) {
+                    volDisplay.style.color = hexColor;
+                }
+            }
+
+            wrapper.querySelectorAll('.neon-dot').forEach(dot => {
+                let isLit = parseFloat(dot.dataset.percent) <= percentage;
+
+                dot.classList.remove('lit', 'color-green', 'color-blue', 'color-red', 'color-orange');
+
+                if (isLit) {
+                    dot.classList.add('lit');
+                    if (wrapperId === 'knobWrapper') {
+                        dot.classList.add(colorClass);
+                    }
+                }
+            });
+        }
+
+        function snapToStep(val) { return Math.round(val * 2) / 2; }
+
+        function dbToYamaha(db) {
+            let clamped = Math.max(minDb, Math.min(maxDb, snapToStep(db)));
+            return Math.round((clamped - minDb) / 0.5);
+        }
+
+        function yamahaToDb(yamahaVal) { return snapToStep(minDb + (yamahaVal * 0.5)); }
+
+        function updateKnobVisual(db) {
+            let snappedDb = Math.max(minDb, Math.min(maxDb, snapToStep(db)));
+            let percentage = (snappedDb - minDb) / (maxDb - minDb);
+            let angle = minAngle + percentage * (maxAngle - minAngle);
+            document.getElementById('volumeKnob').style.transform = `rotate(${angle}deg)`;
+            document.getElementById('volDisplay').innerText = `${snappedDb.toFixed(1)} dB`;
+            updateNeonDotsForWrapper('knobWrapper', percentage);
+        }
+
+        function setToneKnobVisual(wrapperId, knobId, displayId, val) {
+            let snapped = Math.max(minTone, Math.min(maxTone, snapToStep(val)));
+            let percentage = (snapped - minTone) / (maxTone - minTone);
+            let angle = minAngle + percentage * (maxAngle - minAngle);
+            document.getElementById(knobId).style.transform = `rotate(${angle}deg)`;
+            document.getElementById(displayId).innerText = `${snapped > 0 ? '+' : ''}${snapped.toFixed(1)} dB`;
+            updateNeonDotsForWrapper(wrapperId, percentage);
+        }
+
+        function updateToneVisuals() {
+            if (!isInteractingBass) setToneKnobVisual('bassWrapper', 'bassKnob', 'bassDisplay', currentBass);
+            if (!isInteractingTreble) setToneKnobVisual('trebleWrapper', 'trebleKnob', 'trebleDisplay', currentTreble);
+            if (!isInteractingSub) setToneKnobVisual('subWrapper', 'subKnob', 'subDisplay', currentSub);
+        }
+
+        function updateUIState() {
+            const muteBtn = document.getElementById('muteBtn');
+            if (isMuted) {
+                muteBtn.classList.add('active'); muteBtn.innerText = 'Mute: On';
+            } else {
+                muteBtn.classList.remove('active'); muteBtn.innerText = 'Mute';
+            }
+
+            if (!isInteractingInput) {
+                ['hdmi1', 'hdmi2', 'net_radio'].forEach(inp => {
+                    const btn = document.getElementById(`input_${inp}`);
+                    if (btn) {
+                        let cleanCurrent = (currentInput || '').toLowerCase().replace(/[_-\s]/g, '');
+                        let cleanInp = inp.toLowerCase().replace(/[_-\s]/g, '');
+                        btn.classList.toggle('active', cleanCurrent === cleanInp);
+                    }
+                });
+            }
+
+            if (!isInteractingDsp) {
+                const pdBtn = document.getElementById('dsp_pure_direct');
+                if (pdBtn) pdBtn.classList.toggle('active', isPureDirect);
+
+                const straightBtn = document.getElementById('dsp_straight');
+                const dsurBtn = document.getElementById('dsp_dsur');
+                const allChStereoBtn = document.getElementById('dsp_all_ch_stereo');
+
+                if (straightBtn) straightBtn.classList.toggle('active', !isPureDirect && currentDsp === 'straight');
+                if (dsurBtn) dsurBtn.classList.toggle('active', !isPureDirect && currentDsp === 'surr_decoder');
+                if (allChStereoBtn) allChStereoBtn.classList.toggle('active', !isPureDirect && currentDsp === 'all_ch_stereo');
+            }
+        }
+
+        function isValidIp(ip) {
+            return /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ip);
+        }
+
+        function sendCmd(endpoint) {
+            const ip = document.getElementById('ipAddress').value.trim();
+            if (!isValidIp(ip)) return;
+            fetch(`http://${ip}/YamahaExtendedControl/v1/${endpoint}`, { method: 'GET', mode: 'no-cors' }).catch(() => { });
+        }
+
+        function sendXmlCmd(xmlBody) {
+            const ip = document.getElementById('ipAddress').value.trim();
+            if (!isValidIp(ip)) return Promise.reject();
+            return fetch(`http://${ip}/YamahaRemoteControl/ctrl`, {
+                method: 'POST', mode: 'cors', credentials: 'omit',
+                headers: {
+                    'accept': 'application/xml, text/xml, */*; q=0.01',
+                    'content-type': 'text/xml',
+                    'x-requested-with': 'XMLHttpRequest'
+                },
+                body: xmlBody
+            });
+        }
+
+        function selectInput(inputName) {
+            if (inputTimeout) clearTimeout(inputTimeout);
+            isInteractingInput = true;
+            currentInput = inputName;
+            updateUIState();
+            sendCmd(`main/setInput?input=${inputName}`);
+            inputTimeout = setTimeout(() => { isInteractingInput = false; }, CONFIG.releaseDelay);
+        }
+
+        function setDspProgram(dspName) {
+            if (dspTimeout) clearTimeout(dspTimeout);
+            isInteractingDsp = true;
+            isPureDirect = false;
+            currentDsp = dspName;
+            updateUIState();
+            sendCmd(`main/setSoundProgram?program=${dspName}`);
+            dspTimeout = setTimeout(() => { isInteractingDsp = false; }, CONFIG.releaseDelay);
+        }
+
+        function setPureDirect(enable) {
+            if (dspTimeout) clearTimeout(dspTimeout);
+            isInteractingDsp = true;
+            isPureDirect = enable;
+            updateUIState();
+
+            sendCmd(`main/setPureDirect?enable=${enable ? 'true' : 'false'}`);
+
+            dspTimeout = setTimeout(() => { isInteractingDsp = false; }, CONFIG.releaseDelay);
+        }
+
+        function sendToneCommand(type, val) {
+            let snapped = Math.max(minTone, Math.min(maxTone, snapToStep(val)));
+            let valInt = Math.round(snapped * 10);
+            let xml = '';
+
+            if (type === 'bass') {
+                currentBass = snapped;
+                setToneKnobVisual('bassWrapper', 'bassKnob', 'bassDisplay', currentBass);
+                xml = `<YAMAHA_AV cmd="PUT"><Main_Zone><Sound_Video><Tone><Bass><Val>${valInt}</Val><Exp>1</Exp><Unit>dB</Unit></Bass></Tone></Sound_Video></Main_Zone></YAMAHA_AV>`;
+            } else if (type === 'treble') {
+                currentTreble = snapped;
+                setToneKnobVisual('trebleWrapper', 'trebleKnob', 'trebleDisplay', currentTreble);
+                xml = `<YAMAHA_AV cmd="PUT"><Main_Zone><Sound_Video><Tone><Treble><Val>${valInt}</Val><Exp>1</Exp><Unit>dB</Unit></Treble></Tone></Sound_Video></Main_Zone></YAMAHA_AV>`;
+            } else if (type === 'subwoofer') {
+                currentSub = snapped;
+                setToneKnobVisual('subWrapper', 'subKnob', 'subDisplay', currentSub);
+                xml = `<YAMAHA_AV cmd="PUT"><Main_Zone><Volume><Subwoofer_Trim><Val>${valInt}</Val><Exp>1</Exp><Unit>dB</Unit></Subwoofer_Trim></Volume></Main_Zone></YAMAHA_AV>`;
+            }
+
+            sendXmlCmd(xml);
+        }
+
+        function fetchStatusJson() {
+            if (isInteractingVol) return;
+            const ip = document.getElementById('ipAddress').value.trim();
+            if (!isValidIp(ip)) return;
+
+            fetch(`http://${ip}/YamahaExtendedControl/v1/main/getStatus`, { cache: 'no-store' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.response_code === 0) {
+                        isMuted = data.mute;
+                        if (!isInteractingInput) currentInput = data.input;
+                        if (!isInteractingDsp) {
+                            isPureDirect = data.pure_direct || false;
+                            currentDsp = data.sound_program;
+                        }
+                        currentDb = snapToStep(yamahaToDb(data.volume));
+                        updateKnobVisual(currentDb);
+                        updateUIState();
+                    }
+                })
+                .catch(() => { });
+
+            fetch(`http://${ip}/YamahaExtendedControl/v1/main/getSignalInfo`, { cache: 'no-store' })
+                .then(res => res.json())
+                .then(data => {
+                    const badge = document.getElementById('signalInfoBadge');
+
+                    if (data && data.response_code === 0 && data.audio && data.audio.format && data.audio.format !== "---") {
+                        let format = data.audio.format.toUpperCase();
+                        let fsVal = data.audio.fs;
+
+                        if (fsVal !== undefined && fsVal !== null && fsVal !== "" && fsVal !== "---") {
+                            let fsStr = String(fsVal).trim();
+                            if (!fsStr.toLowerCase().includes('khz') && !fsStr.toLowerCase().includes('hz')) {
+                                let num = parseFloat(fsStr);
+                                if (!isNaN(num)) {
+                                    fsStr = (num > 1000 ? num / 1000 : num).toFixed(1).replace('.0', '') + " kHz";
+                                }
+                            }
+                            signalTextDisplay = `${format} ${fsStr}`;
+                        } else {
+                            signalTextDisplay = format;
+                        }
+
+                        if (badge) badge.classList.remove('no-signal');
+                    } else {
+                        signalTextDisplay = "NO SIGNAL";
+                        if (badge) badge.classList.add('no-signal');
+                    }
+                }).catch(() => {
+                    signalTextDisplay = "NO SIGNAL";
+                    const badge = document.getElementById('signalInfoBadge');
+                    if (badge) badge.classList.add('no-signal');
+                });
+        }
+
+        function fetchToneXml() {
+            if (isInteractingBass && isInteractingTreble && isInteractingSub) return;
+            const ip = document.getElementById('ipAddress').value.trim();
+            if (!isValidIp(ip)) return;
+
+            let xmlQuery = `<YAMAHA_AV cmd="GET"><Main_Zone><Basic_Status>GetParam</Basic_Status></Main_Zone></YAMAHA_AV>`;
+
+            sendXmlCmd(xmlQuery)
+                .then(res => res.text())
+                .then(str => {
+                    const parser = new window.DOMParser();
+                    const xmlDoc = parser.parseFromString(str, "text/xml");
+
+                    function getVal(tagName) {
+                        const elements = xmlDoc.getElementsByTagName(tagName);
+                        if (elements.length > 0) {
+                            const valEl = elements[0].getElementsByTagName('Val')[0];
+                            const expEl = elements[0].getElementsByTagName('Exp')[0];
+                            if (valEl) {
+                                let val = parseFloat(valEl.textContent);
+                                let exp = expEl ? parseInt(expEl.textContent) : 1;
+                                return val / Math.pow(10, exp);
+                            }
+                        }
+                        return null;
+                    }
+
+                    if (!isInteractingBass) {
+                        let b = getVal('Bass');
+                        if (b !== null) currentBass = snapToStep(b);
+                    }
+                    if (!isInteractingTreble) {
+                        let t = getVal('Treble');
+                        if (t !== null) currentTreble = snapToStep(t);
+                    }
+                    if (!isInteractingSub) {
+                        let s = getVal('Subwoofer_Trim');
+                        if (s !== null) currentSub = snapToStep(s);
+                    }
+
+                    updateToneVisuals();
+                }).catch(() => { });
+        }
+
+        function fetchAllStatus() {
+            fetchStatusJson();
+            fetchToneXml();
+        }
+
+        function restartPolling() {
+            if (statusInterval) clearInterval(statusInterval);
+            statusInterval = setInterval(fetchAllStatus, CONFIG.pollIntervalMs);
+        }
+
+        function setAbsoluteVolume(db) {
+            currentDb = Math.max(minDb, Math.min(maxDb, snapToStep(db)));
+            updateKnobVisual(currentDb);
+            sendCmd(`main/setVolume?volume=${dbToYamaha(currentDb)}`);
+            isMuted = false;
+            updateUIState();
+        }
+
+        function changeVolStep(deltaDb) {
+            if (volTimeout) clearTimeout(volTimeout);
+            isInteractingVol = true;
+            setAbsoluteVolume(currentDb + deltaDb);
+            volTimeout = setTimeout(() => { isInteractingVol = false; }, CONFIG.releaseDelay);
+            isMuted = false;
+            updateUIState();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            createNeonDotsForWrapper('knobWrapper', 54, 65, 65);
+            createNeonDotsForWrapper('bassWrapper', 34, 40, 40);
+            createNeonDotsForWrapper('trebleWrapper', 34, 40, 40);
+            createNeonDotsForWrapper('subWrapper', 34, 40, 40);
+
+            const ipInput = document.getElementById('ipAddress');
+            if (ipInput) {
+                ipInput.value = localStorage.getItem('yamaha_ip') || '192.168.1.51';
+
+                ipInput.addEventListener('input', () => {
+                    const val = ipInput.value.trim();
+                    localStorage.setItem('yamaha_ip', val);
+                    if (isValidIp(val)) {
+                        fetchAllStatus();
+                    }
+                });
+
+                fetchAllStatus();
+            }
+
+            const attachKnobEvents = (wrapperId, type) => {
+                const wrapper = document.getElementById(wrapperId);
+                if (!wrapper) return;
+
+                let startY = 0, startVal = 0, dragging = false;
+                let lastSendTime = 0;
+
+                const getCurrVal = () => {
+                    if (type === 'vol') return currentDb;
+                    if (type === 'bass') return currentBass;
+                    if (type === 'treble') return currentTreble;
+                    if (type === 'subwoofer') return currentSub;
+                };
+
+                const onStart = (clientY) => {
+                    dragging = true;
+                    startY = clientY;
+                    startVal = getCurrVal();
+
+                    if (type === 'vol') {
+                        if (volTimeout) clearTimeout(volTimeout);
+                        isInteractingVol = true;
+                    }
+                    if (type === 'bass') {
+                        if (bassTimeout) clearTimeout(bassTimeout);
+                        isInteractingBass = true;
+                    }
+                    if (type === 'treble') {
+                        if (trebleTimeout) clearTimeout(trebleTimeout);
+                        isInteractingTreble = true;
+                    }
+                    if (type === 'subwoofer') {
+                        if (subTimeout) clearTimeout(subTimeout);
+                        isInteractingSub = true;
+                    }
+                };
+
+                const onMove = (clientY) => {
+                    if (!dragging) return;
+                    let deltaY = startY - clientY;
+
+                    if (type === 'vol') {
+                        let rawCalc = startVal + (deltaY / 400) * (maxDb - minDb);
+                        currentDb = Math.max(minDb, Math.min(maxDb, snapToStep(rawCalc)));
+
+                        updateKnobVisual(currentDb);
+
+                        let now = Date.now();
+                        if (now - lastSendTime > CONFIG.throttleSend) {
+                            lastSendTime = now;
+                            sendCmd(`main/setVolume?volume=${dbToYamaha(currentDb)}`);
+                        }
+                    } else {
+                        let calcVal = Math.max(minTone, Math.min(maxTone, startVal + (deltaY / 250) * (maxTone - minTone)));
+                        let snapped = snapToStep(calcVal);
+
+                        if (type === 'bass') {
+                            currentBass = snapped;
+                            setToneKnobVisual('bassWrapper', 'bassKnob', 'bassDisplay', currentBass);
+                        }
+                        if (type === 'treble') {
+                            currentTreble = snapped;
+                            setToneKnobVisual('trebleWrapper', 'trebleKnob', 'trebleDisplay', currentTreble);
+                        }
+                        if (type === 'subwoofer') {
+                            currentSub = snapped;
+                            setToneKnobVisual('subWrapper', 'subKnob', 'subDisplay', currentSub);
+                        }
+
+                        let now = Date.now();
+                        if (now - lastSendTime > CONFIG.throttleSend) {
+                            lastSendTime = now;
+                            sendToneCommand(type, getCurrVal());
+                        }
+                    }
+                };
+
+                const onEnd = () => {
+                    if (!dragging) return;
+                    dragging = false;
+
+                    if (type === 'vol') {
+                        setAbsoluteVolume(currentDb);
+                        volTimeout = setTimeout(() => { isInteractingVol = false; }, CONFIG.releaseDelay);
+                    } else {
+                        sendToneCommand(type, getCurrVal());
+                        if (type === 'bass') bassTimeout = setTimeout(() => { isInteractingBass = false; }, CONFIG.releaseDelay);
+                        if (type === 'treble') trebleTimeout = setTimeout(() => { isInteractingTreble = false; }, CONFIG.releaseDelay);
+                        if (type === 'subwoofer') subTimeout = setTimeout(() => { isInteractingSub = false; }, CONFIG.releaseDelay);
+                    }
+                };
+
+                wrapper.addEventListener('mousedown', e => { onStart(e.clientY); e.preventDefault(); });
+                window.addEventListener('mousemove', e => onMove(e.clientY));
+                window.addEventListener('mouseup', onEnd);
+
+                wrapper.addEventListener('touchstart', e => { onStart(e.touches[0].clientY); }, { passive: true });
+                window.addEventListener('touchmove', e => { if (dragging) onMove(e.touches[0].clientY); }, { passive: true });
+                window.addEventListener('touchend', onEnd);
+
+                wrapper.addEventListener('wheel', e => {
+                    let step = e.deltaY < 0 ? 0.5 : -0.5;
+                    if (type === 'vol') {
+                        if (volTimeout) clearTimeout(volTimeout);
+                        isInteractingVol = true;
+                        setAbsoluteVolume(currentDb + step);
+                        volTimeout = setTimeout(() => { isInteractingVol = false; }, CONFIG.releaseDelay);
+                    } else {
+                        if (type === 'bass') { if (bassTimeout) clearTimeout(bassTimeout); isInteractingBass = true; }
+                        if (type === 'treble') { if (trebleTimeout) clearTimeout(trebleTimeout); isInteractingTreble = true; }
+                        if (type === 'subwoofer') { if (subTimeout) clearTimeout(subTimeout); isInteractingSub = true; }
+
+                        let newVal = getCurrVal() + step;
+                        sendToneCommand(type, newVal);
+
+                        if (type === 'bass') bassTimeout = setTimeout(() => { isInteractingBass = false; }, CONFIG.releaseDelay);
+                        if (type === 'treble') trebleTimeout = setTimeout(() => { isInteractingTreble = false; }, CONFIG.releaseDelay);
+                        if (type === 'subwoofer') subTimeout = setTimeout(() => { isInteractingSub = false; }, CONFIG.releaseDelay);
+                    }
+                    e.preventDefault();
+                }, { passive: false });
+            };
+
+            attachKnobEvents('knobWrapper', 'vol');
+            attachKnobEvents('bassWrapper', 'bass');
+            attachKnobEvents('trebleWrapper', 'treble');
+            attachKnobEvents('subWrapper', 'subwoofer');
+
+            restartPolling();
+            startRealAudioCapture();
+        });
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            updateUIState();
+            sendXmlCmd(`<YAMAHA_AV cmd="PUT"><Main_Zone><Volume><Mute>${isMuted ? 'On' : 'Off'}</Mute></Volume></Main_Zone></YAMAHA_AV>`);
+        }
+
+        const { ipcRenderer } = require('electron');
+        ipcRenderer.on('toggle-lock', (event, unlocked) => {
+            const titleBar = document.getElementById('customTitleBar');
+            const refreshBtn = document.getElementById('refreshBtn');
+
+            if (unlocked) {
+                titleBar.classList.add('unlocked');
+                if (refreshBtn) refreshBtn.style.display = 'none';
+            } else {
+                titleBar.classList.remove('unlocked');
+                if (refreshBtn) refreshBtn.style.display = 'flex';
+            }
+        });
+
+        let volHoldInterval = null;
+
+        function startVolHold(deltaDb) {
+            if (volHoldInterval) clearInterval(volHoldInterval);
+
+            changeVolStep(deltaDb);
+
+            volHoldInterval = setInterval(() => {
+                changeVolStep(deltaDb);
+            }, 120);
+        }
+
+        function stopVolHold() {
+            if (volHoldInterval) {
+                clearInterval(volHoldInterval);
+                volHoldInterval = null;
+            }
+        }
+
+        window.addEventListener('mouseup', stopVolHold);
+        window.addEventListener('touchend', stopVolHold);
+        window.addEventListener('touchcancel', stopVolHold);
+
+        const waveCanvas = document.getElementById('waveCanvas');
+        const waveCtx = waveCanvas.getContext('2d');
+
+        let animationId;
+        let time = 0;
+
+        const waves = [
+            { speed: 0.015, amplitude: 40, color: 'rgba(33, 150, 243, 0.6)' }, // blue
+            { speed: 0.02, amplitude: 30, color: 'rgba(255, 87, 34, 0.5)' },   // orange
+            { speed: 0.01, amplitude: 50, color: 'rgba(76, 175, 80, 0.4)' }    // green
+        ];
+
+        function resizeCanvas() {
+            waveCanvas.width = waveCanvas.parentElement.offsetWidth;
+            waveCanvas.height = waveCanvas.parentElement.offsetHeight;
+        }
+
+        function drawWaves() {
+            waveCtx.clearRect(0, 0, waveCanvas.width, waveCanvas.height);
+
+            const width = waveCanvas.width;
+            const height = waveCanvas.height;
+            const centerY = height / 2;
+
+            waves.forEach(wave => {
+                waveCtx.beginPath();
+                waveCtx.lineWidth = 3;
+                waveCtx.strokeStyle = wave.color;
+                waveCtx.moveTo(0, centerY);
+
+                for (let x = 0; x < width; x++) {
+                    const y = centerY + Math.sin(x * 0.01 + time * wave.speed) * wave.amplitude;
+                    const gradient = Math.sin(x / width * Math.PI);
+                    const easedY = centerY + (y - centerY) * gradient;
+                    waveCtx.lineTo(x, easedY);
+                }
+                waveCtx.stroke();
+            });
+
+            time += 1;
+            animationId = requestAnimationFrame(drawWaves);
+        }
+
+        function startWaveAnimations() {
+            const viz = document.getElementById('vizCanvas');
+            const wave = document.getElementById('waveCanvas');
+            if (viz) viz.style.display = 'none';
+            if (wave) wave.style.display = 'block';
+
+            resizeCanvas();
+            if (!animationId) {
+                drawWaves();
+            }
+        }
+
+        function stopWaveAnimations() {
+            const viz = document.getElementById('vizCanvas');
+            const wave = document.getElementById('waveCanvas');
+            if (wave) wave.style.display = 'none';
+            if (viz) viz.style.display = 'block';
+
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = undefined;
+            }
+        }
+
+        let reconnectInterval = null;
+
+        function checkAndReconnectAudio() {
+            if (!audioAnalyser) {
+                console.log("Trying to restore audio stream...");
+                startRealAudioCapture();
+            }
+        }
+
+        reconnectInterval = setInterval(checkAndReconnectAudio, 3000);
+
+        ipcRenderer.on('global-volume-adjust', (event, delta) => {
+            changeVolStep(delta);
+        });
+    </script>
+
+</body>
+
+</html>
