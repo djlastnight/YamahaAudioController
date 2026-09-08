@@ -385,6 +385,10 @@
             border-color: #ff9800;
             transform: scale(1.05);
         }
+
+        #channelOutLabel, #channelOut {
+            font-size: 10px;
+        }
     </style>
 </head>
 
@@ -470,7 +474,7 @@
             <button id="input_net_radio" onclick="selectInput('net_radio')">Net Radio</button>
         </div>
 
-        <div class="section">
+        <div style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
             <label><small><strong>DSP Mode</strong></small></label>
             <div class="dsp-grid">
                 <button id="dsp_pure_direct" onclick="setPureDirect(!isPureDirect)">Pure Direct</button>
@@ -480,11 +484,12 @@
             </div>
         </div>
 
-        <div class="section" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
+        <div style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
             <div class="visualizer-container">
                 <canvas id="vizCanvas" style="display: none;"></canvas>
                 <canvas id="waveCanvas" style="display: none;"></canvas>
             </div>
+            <label id="channelOutLabel">Channel Out: <span id="channelOut">-</span></label>
             <div class="speakers-status">
                 <div id="signalInfoBadge" class="spk-badge">SIGNAL: ---</div>
             </div>
@@ -1024,9 +1029,40 @@
             fetchToneXml();
         }
 
+        function updateChannelOut() {
+            const label = document.getElementById('channelOut');
+            if (signalTextDisplay !== "NO SIGNAL") {
+                getSpeakerConfig().then(speakers => {
+                    // TODO: get whether setup is 5.1.2 or 7.1.0. We do currently support only 5.1.2
+                    const regularCount = 0 + 2 * speakers.front + speakers.center + 2 * speakers.surround;
+                    const subsCount = 0 + speakers.sub;
+                    const atmosCount = 0 + 2 * speakers.front_presence;
+                    const format = signalTextDisplay.split(' ')[0].toLowerCase();
+                    if (format === 'pcm') {
+                        if (isPureDirect) {
+                            label.innerText = `2.0.0`;
+                        } else {
+                            if (currentDsp === 'surr_decoder' || currentDsp === 'all_ch_stereo') {
+                                label.innerText = `${regularCount}.${subsCount}.${atmosCount}`;
+                            } else if (currentDsp === 'straight') {
+                                label.innerText = `${regularCount}.${subsCount}.0`;
+                            }
+                        }
+
+                    } else {
+                        label.innerText = `${regularCount}.${subsCount}.${atmosCount}`;
+                    }
+                });
+
+            } else {
+                label.innerText = '---';
+            }
+        }
+
         function restartPolling() {
             if (statusInterval) clearInterval(statusInterval);
             statusInterval = setInterval(fetchAllStatus, CONFIG.pollIntervalMs);
+            setInterval(updateChannelOut, 2000);
         }
 
         function setAbsoluteVolume(db) {
@@ -1197,6 +1233,7 @@
 
             restartPolling();
             startRealAudioCapture();
+            updateChannelOut();
         });
 
         function toggleMute() {
@@ -1323,6 +1360,60 @@
         ipcRenderer.on('global-volume-adjust', (event, delta) => {
             changeVolStep(delta);
         });
+
+        async function getSpeakerConfig() {
+            const ip = document.getElementById('ipAddress').value.trim();
+            const url = `http://${ip}/YamahaRemoteControl/ctrl`;
+
+            const channelsToFetch = {
+                sub: "Subwoofer Subwoofer_1", // Nested (separate by space)
+                front: "Front",
+                center: "Center",
+                surround: "Sur",
+                surr_back: "Sur_Back",
+                front_presence: "Front_Presence"
+            };
+
+            const result = {
+                sub: false,
+                front: false,
+                center: false,
+                surround: false,
+                surr_back: false,
+                front_presence: false,
+            };
+
+            for (const [key, selector] of Object.entries(channelsToFetch)) {
+                const mainTag = selector.split(' ')[0];
+                const xmlBody = `<YAMAHA_AV cmd="GET"><System><Speaker_Preout><Pattern_1><Config><${mainTag}>GetParam</${mainTag}></Config></Pattern_1></Speaker_Preout></System></YAMAHA_AV>`;
+
+                try {
+                    const response = await fetch(url, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "text/xml",
+                            "X-Requested-With": "XMLHttpRequest"
+                        },
+                        body: xmlBody
+                    });
+
+                    const textResponse = await response.text();
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(textResponse, "text/xml");
+
+                    const element = xmlDoc.querySelector(`${selector} Type`) || xmlDoc.querySelector(selector);
+                    const statusValue = element ? element.textContent.trim() : "";
+
+                    const isNone = !statusValue || statusValue.toLowerCase() === 'none';
+                    result[key] = !isNone;
+                } catch (error) {
+                    console.error(`Грешка при четене на канал ${key}:`, error);
+                    result[key] = false;
+                }
+            }
+
+            return result;
+        }
     </script>
 
 </body>
