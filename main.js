@@ -126,6 +126,13 @@ ipcMain.on('window-max', () => {
     }
 });
 ipcMain.on('window-close', () => mainWindow.hide());
+ipcMain.on('change-zoom', (event, delta) => {
+    if (mainWindow) {
+        const currentLevel = mainWindow.webContents.getZoomLevel();
+        const levelDelta = delta > 0 ? 0.01 : -0.01;
+        mainWindow.webContents.setZoomLevel(currentLevel + levelDelta);
+    }
+});
 
 app.whenReady().then(() => {
     createWindow();

@@ -6,61 +6,92 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yamaha RX-V6A Sidebar</title>
     <style>
+        :root {
+            --bg-base: #121212;
+            --bg-container: #1e1e1e;
+            --accent: #ff9800;
+            --text-main: #e0e0e0;
+            --border-color: #333;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
         body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #e0e0e0;
-            text-align: center;
+            height: 100vh;
             margin: 0;
-            padding: 10px;
-            user-select: none;
+            padding: 0;
             overflow: hidden;
+            background-color: var(--bg-container);
+            color: var(--text-main);
+            font-family: Arial, sans-serif;
+            user-select: none;
         }
 
         .container {
             width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
-            background: #1e1e1e;
-            padding: 12px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-            box-sizing: border-box;
+            height: 100vh;
+            position: relative;
+            padding: 8px 6px 4px 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #444 transparent;
+        }
+
+        .container::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .container::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 2px;
         }
 
         h2 {
-            margin: 5px 0 12px 0;
-            color: #ff9800;
-            font-size: 18px;
+            margin: 0 0 4px 0;
+            color: var(--accent);
+            font-size: clamp(10px, 1.5vh, 13px);
+            text-align: center;
         }
 
         .section {
-            margin-bottom: 12px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #333;
+            margin-bottom: 4px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
         }
 
         input[type="text"] {
-            width: 85%;
-            padding: 7px;
-            margin-bottom: 3px;
+            width: 90%;
+            padding: 4px;
             background: #2d2d2d;
             border: 1px solid #444;
             color: white;
-            border-radius: 6px;
+            border-radius: 4px;
             text-align: center;
-            font-size: 13px;
+            font-size: clamp(11px, 1.4vh, 13px);
         }
 
         button {
             background-color: #333;
             color: white;
             border: none;
-            padding: 9px 14px;
-            margin: 3px;
-            border-radius: 6px;
+            padding: clamp(4px, 0.9vh, 8px) 8px;
+            margin: 1px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: clamp(10px, 1.3vh, 12px);
             transition: 0.2s;
         }
 
@@ -69,10 +100,10 @@
         }
 
         button.active {
-            background-color: #ff9800 !important;
+            background-color: var(--accent) !important;
             color: black !important;
             font-weight: bold;
-            box-shadow: 0 0 8px #ff9800;
+            box-shadow: 0 0 6px var(--accent);
         }
 
         .power-btn {
@@ -84,37 +115,36 @@
         }
 
         .mute-btn {
-            background-color: #555;
+            background-color: #444444;
+            width: 100%;
+            margin: 3px 0px 0px 0px;
         }
 
         .volume-container {
             display: flex;
             justify-content: space-between;
-            gap: 8px;
+            gap: 4px;
         }
 
         .volume-container button {
             flex: 1;
         }
 
-        .knob-wrapper {
-            position: relative;
-            margin: 8px auto;
-            cursor: ns-resize;
-            touch-action: none;
+        label {
+            font-size: 0.7rem;
         }
 
         #knobWrapper {
-            width: 130px;
-            height: 130px;
+            width: clamp(90px, 15vh, 145px);
+            height: clamp(90px, 15vh, 145px);
             background: radial-gradient(circle, #181818 0%, #0d0d0d 70%);
             border: 1px solid #2a2a2a;
             border-radius: 50%;
-            margin: 10px auto;
+            margin: 4px auto;
             position: relative;
             cursor: ns-resize;
             touch-action: none;
-            box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.9), 0 4px 10px rgba(0, 0, 0, 0.4);
+            box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.9), 0 3px 8px rgba(0, 0, 0, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -122,34 +152,32 @@
 
         .knob {
             background: linear-gradient(145deg, #2a2a2a, #151515);
-            border: 4px solid #383838;
+            border: 3px solid #383838;
             border-radius: 50%;
             position: absolute;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.9), inset 0 2px 6px rgba(255, 255, 255, 0.08);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.9), inset 0 1px 4px rgba(255, 255, 255, 0.08);
             transform: rotate(-135deg);
             z-index: 2;
         }
 
         #volumeKnob {
-            width: 92px;
-            height: 92px;
-            top: 15px;
-            left: 15px;
+            width: 70%;
+            height: 70%;
         }
 
         .knob-indicator {
             position: absolute;
             left: 50%;
-            background-color: #ff9800;
+            background-color: var(--accent);
             transform: translateX(-50%);
             border-radius: 2px;
-            box-shadow: 0 0 8px #ff9800;
+            box-shadow: 0 0 6px var(--accent);
         }
 
         #volumeKnob .knob-indicator {
-            top: 5px;
-            width: 3px;
-            height: 16px;
+            top: 3px;
+            width: 2px;
+            height: 12px;
         }
 
         .neon-dot {
@@ -161,99 +189,118 @@
             transition: background-color 0.2s, box-shadow 0.2s;
         }
 
+        .neon-dot-tone {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: #333;
+            border-radius: 50%;
+            transition: background-color 0.2s, box-shadow 0.2s;
+        }
+
         .neon-dot.lit {
-            background-color: #ff9800;
-            box-shadow: 0 0 5px #ff9800, 0 0 8px #ff9800;
+            background-color: var(--accent);
+            box-shadow: 0 0 4px var(--accent), 0 0 6px var(--accent);
+        }
+
+        .neon-dot-tone.lit {
+            background-color: var(--accent);
+            box-shadow: 0 0 4px var(--accent), 0 0 6px var(--accent);
         }
 
         .tone-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 5px;
+            gap: 6px;
+            margin-top: 2px;
         }
 
         .tone-card {
             background: #252525;
-            padding: 6px;
+            padding: 4px;
             border-radius: 6px;
             border: 1px solid #333;
             text-align: center;
         }
 
         .tone-card label {
-            font-size: 11px;
+            font-size: clamp(9px, 1.2vh, 11px);
             color: #aaa;
             display: block;
-            margin-bottom: 3px;
         }
 
         .tone-card span {
             font-weight: bold;
-            color: #ff9800;
-            font-size: 12px;
+            color: var(--accent);
+            font-size: clamp(9px, 1.2vh, 11px);
         }
 
         .tone-knob-wrapper {
-            width: 80px;
-            height: 80px;
-            margin: 3px auto;
+            width: clamp(45px, 7vh, 65px);
+            height: clamp(45px, 7vh, 65px);
+            margin: 2px auto;
+            position: relative;
+            cursor: ns-resize;
+            touch-action: none;
+            background: radial-gradient(circle, #181818 0%, #0d0d0d 70%);
+            border: 1px solid #2a2a2a;
+            border-radius: 50%;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.9), 0 2px 5px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .tone-knob {
-            width: 56px;
-            height: 56px;
-            top: 8px;
-            left: 8px;
+            width: 68%;
+            height: 68%;
         }
 
         .tone-knob .knob-indicator {
-            top: 3px;
+            top: 2px;
             width: 2px;
-            height: 10px;
+            height: 7px;
         }
 
         #volDisplay {
             font-weight: bold;
-            color: #ff9800;
-            font-size: 15px;
+            color: var(--accent);
+            font-size: clamp(11px, 1.5vh, 14px);
         }
 
         .visualizer-container {
             background: #151515;
             border: 1px solid #333;
-            border-radius: 6px;
-            padding: 6px;
-            margin-top: 5px;
+            border-radius: 4px;
+            padding: 1px;
+            margin-top: 2px;
         }
 
         canvas {
             display: block;
             width: 100%;
-            height: 45px;
+            height: clamp(27px, 4.2vh, 42px);
             background: #0d0d0d;
-            border-radius: 4px;
+            border-radius: 3px;
         }
 
         .speakers-status {
             display: flex;
             justify-content: center;
-            margin-top: 6px;
+            margin-top: 3px;
         }
 
         .spk-badge {
             background: rgba(76, 175, 80, 0.15);
             border: 1px solid #4caf50;
             border-radius: 4px;
-            padding: 6px 16px;
-            font-size: 11px;
+            padding: 3px 6px;
+            font-size: clamp(9px, 1.2vh, 11px);
             color: #4caf50;
             text-align: center;
             font-weight: bold;
-            box-shadow: 0 0 6px rgba(76, 175, 80, 0.3);
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
             width: 100%;
-            letter-spacing: 0.5px;
-            transition: 0.3s;
         }
 
         .spk-badge.no-signal {
@@ -265,30 +312,28 @@
 
         .dsp-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 6px;
-            margin-top: 5px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3px;
+            margin-top: 2px;
         }
 
         .dsp-grid button {
-            width: 100%;
+            width: 96%;
             margin: 0;
-            padding: 8px 4px;
-            font-size: 11px;
+            padding: clamp(4px, 0.8vh, 6px) 1px;
+            font-size: clamp(9px, 1.1vh, 10px);
         }
 
         #customTitleBar {
             display: none;
-            height: 32px;
+            height: 22px;
             background: #181818;
             align-items: center;
             justify-content: space-between;
-            padding: 0 8px;
+            padding: 0 6px;
             -webkit-app-region: drag;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
             border-bottom: 1px solid #333;
-            margin: -12px -12px 10px -12px;
+            margin: -8px -12px 6px -12px;
         }
 
         #customTitleBar.unlocked {
@@ -296,14 +341,14 @@
         }
 
         .title-text {
-            font-size: 12px;
-            color: #ff9800;
+            font-size: 10px;
+            color: var(--accent);
             font-weight: bold;
         }
 
         .window-controls {
             display: flex;
-            gap: 4px;
+            gap: 2px;
         }
 
         .window-controls button {
@@ -311,11 +356,11 @@
             background: transparent;
             border: none;
             color: #aaa;
-            width: 28px;
-            height: 24px;
-            border-radius: 4px;
+            width: 18px;
+            height: 18px;
+            border-radius: 3px;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 9px;
             margin: 0;
             padding: 0;
         }
@@ -332,70 +377,119 @@
 
         .neon-dot.lit.color-green {
             background-color: #4caf50;
-            box-shadow: 0 0 5px #4caf50, 0 0 8px #4caf50;
+            box-shadow: 0 0 4px #4caf50, 0 0 6px #4caf50;
         }
 
         .neon-dot.lit.color-blue {
             background-color: #2196f3;
-            box-shadow: 0 0 5px #2196f3, 0 0 8px #2196f3;
+            box-shadow: 0 0 4px #2196f3, 0 0 6px #2196f3;
         }
 
         .neon-dot.lit.color-red {
             background-color: #f44336;
-            box-shadow: 0 0 5px #f44336, 0 0 8px #f44336;
+            box-shadow: 0 0 4px #f44336, 0 0 6px #f44336;
         }
 
         #volumeKnob .knob-indicator.color-green {
             background-color: #4caf50;
-            box-shadow: 0 0 8px #4caf50;
+            box-shadow: 0 0 6px #4caf50;
         }
 
         #volumeKnob .knob-indicator.color-blue {
             background-color: #2196f3;
-            box-shadow: 0 0 8px #2196f3;
+            box-shadow: 0 0 6px #2196f3;
         }
 
         #volumeKnob .knob-indicator.color-red {
             background-color: #f44336;
-            box-shadow: 0 0 8px #f44336;
+            box-shadow: 0 0 6px #f44336;
         }
 
         #refreshBtn {
             position: fixed;
-            top: 17px;
-            right: 17px;
+            top: 4px;
+            right: 4px;
             z-index: 9999;
             background: rgba(30, 30, 30, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: #fff;
-            width: 30px;
-            height: 30px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18x;
-            backdrop-filter: blur(5px);
-            transition: all 0.2s ease;
+            font-size: 10px;
+            backdrop-filter: blur(3px);
         }
 
         #refreshBtn:hover {
             background: rgba(50, 50, 50, 1);
-            border-color: #ff9800;
-            transform: scale(1.05);
+            border-color: var(--accent);
         }
 
-        #channelOutLabel, #channelOut {
+        #zoomMinus {
+            position: fixed;
+            top: 4px;
+            left: 4px;
+            z-index: 9999;
+            background: rgba(30, 30, 30, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 10px;
+            backdrop-filter: blur(3px);
+        }
+
+        #zoomMinus:hover {
+            background: rgba(50, 50, 50, 1);
+            border-color: var(--accent);
+        }
+
+        #zoomPlus {
+            position: fixed;
+            top: 4px;
+            left: 24px;
+            z-index: 9999;
+            background: rgba(30, 30, 30, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            backdrop-filter: blur(3px);
+        }
+
+        #zoomPlus:hover {
+            background: rgba(50, 50, 50, 1);
+            border-color: var(--accent);
+        }
+
+        #channelOutLabel,
+        #channelOut {
+            font-size: clamp(9px, 1.2vh, 11px);
         }
     </style>
 </head>
 
 <body>
 
-    <div class="container" style="position: relative;">
+    <div class="container">
         <button id="refreshBtn" onclick="location.reload()" title="Refresh Page (Ctrl+R)">↻</button>
+        <button id="zoomMinus" onclick="changeZoom(-0.1)" title="Zoom out (Ctrl+Shift+-)">-</button>
+        <button id="zoomPlus" onclick="changeZoom(0.1)" title="Zoom in (Ctrl++)">+</button>
         <div id="customTitleBar">
             <span class="title-text">Yamaha RX-V6A (Unlocked)</span>
             <div class="window-controls">
@@ -411,12 +505,12 @@
         </div>
 
         <div class="section">
-            <button class="power-btn" onclick="sendCmd('main/setPower?power=on')">Power Control (ON)</button>
-            <button class="power-btn" onclick="sendCmd('main/setPower?power=standby')">Power Off (Standby)</button>
+            <button class="power-btn" onclick="sendCmd('main/setPower?power=on')">Power On</button>
+            <button class="power-btn" onclick="sendCmd('main/setPower?power=standby')">Power Off</button>
         </div>
 
         <div class="section">
-            <label>Volume: <span id="volDisplay">-40.0 dB</span></label>
+            <label style="font-size: clamp(10px, 1.3vh, 12px);">Volume: <span id="volDisplay">-40.0 dB</span></label>
 
             <div class="knob-wrapper" id="knobWrapper">
                 <div class="knob" id="volumeKnob">
@@ -424,14 +518,13 @@
                 </div>
             </div>
 
-            <div class="volume-container" style="margin-top: 6px;">
+            <div class="volume-container">
                 <button title="Volume down (Ctrl+ArrowDown)" onmousedown="startVolHold(-1.0)" onmouseup="stopVolHold()"
                     onttouchstart="startVolHold(-1.0)" ontouchend="stopVolHold()">Volume -</button>
                 <button title="Volume up (Ctrl+ArrowUp)" onmousedown="startVolHold(1.0)" onmouseup="stopVolHold()"
                     onttouchstart="startVolHold(1.0)" ontouchend="stopVolHold()">Volume +</button>
             </div>
-            <button id="muteBtn" class="mute-btn" onclick="toggleMute()"
-                style="width: 100%; margin-top: 6px;">Mute</button>
+            <button id="muteBtn" class="mute-btn" onclick="toggleMute()">Mute</button>
         </div>
 
         <div class="section">
@@ -457,7 +550,7 @@
                 </div>
             </div>
 
-            <div class="tone-card" style="margin-top: 8px;">
+            <div class="tone-card" style="margin-top: 3px;">
                 <label>Subwoofer level: <span id="subDisplay">0.0 dB</span></label>
                 <div class="knob-wrapper tone-knob-wrapper" id="subWrapper" data-type="subwoofer">
                     <div class="knob tone-knob" id="subKnob">
@@ -474,7 +567,7 @@
             <button id="input_net_radio" onclick="selectInput('net_radio')">Net Radio</button>
         </div>
 
-        <div style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
+        <div class="section" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
             <label><small><strong>DSP Mode</strong></small></label>
             <div class="dsp-grid">
                 <button id="dsp_pure_direct" onclick="setPureDirect(!isPureDirect)">Pure Direct</button>
@@ -489,7 +582,8 @@
                 <canvas id="vizCanvas" style="display: none;"></canvas>
                 <canvas id="waveCanvas" style="display: none;"></canvas>
             </div>
-            <label id="channelOutLabel">Channel Out: <span id="channelOut">-</span></label>
+            <label id="channelOutLabel" style="margin-top: 2px; display: block;">Channel Out: <span
+                    id="channelOut">-</span></label>
             <div class="speakers-status">
                 <div id="signalInfoBadge" class="spk-badge">SIGNAL: ---</div>
             </div>
@@ -582,8 +676,14 @@
 
         const resizeObserver = new ResizeObserver(entries => {
             for (let entry of entries) {
-                canvas.width = entry.contentRect.width;
-                canvas.height = 45;
+                const dpr = window.devicePixelRatio || 1;
+                const rect = entry.contentRect;
+
+                canvas.width = Math.round(rect.width * dpr);
+                canvas.height = Math.round(Math.max(12, entry.target.offsetHeight - 2) * dpr);
+
+                // ctx.resetTransform();
+                // ctx.scale(dpr, dpr);
             }
         });
         resizeObserver.observe(canvas.parentElement);
@@ -714,11 +814,11 @@
 
         drawVisualizer();
 
-        function createNeonDotsForWrapper(wrapperId, radius, centerX, centerY) {
+        function createNeonDotsForWrapper(wrapperId, radius, centerX, centerY, isTone) {
             const wrapper = document.getElementById(wrapperId);
             if (!wrapper) return;
-            const totalDots = 14;
-            wrapper.querySelectorAll('.neon-dot').forEach(d => d.remove());
+            const totalDots = isTone ? 13 : 21;
+            wrapper.querySelectorAll(isTone ? '.neon-dot-tone' : '.neon-dot').forEach(d => d.remove());
             for (let i = 0; i < totalDots; i++) {
                 let percent = i / (totalDots - 1);
                 let angleDeg = minAngle + percent * (maxAngle - minAngle);
@@ -727,7 +827,7 @@
                 let y = centerY + radius * Math.sin(angleRad) - 2;
 
                 const dot = document.createElement('div');
-                dot.className = 'neon-dot';
+                dot.className = isTone ? 'neon-dot-tone' : 'neon-dot';
                 dot.style.left = `${x}px`;
                 dot.style.top = `${y}px`;
                 dot.dataset.percent = percent;
@@ -752,8 +852,6 @@
                 } else if (percentage > 0.50) {
                     colorClass = 'color-green';
                     hexColor = '#4caf50';
-                } else {
-
                 }
 
                 const mainIndicator = document.querySelector('#volumeKnob .knob-indicator');
@@ -775,9 +873,17 @@
 
                 if (isLit) {
                     dot.classList.add('lit');
-                    if (wrapperId === 'knobWrapper') {
-                        dot.classList.add(colorClass);
-                    }
+                    dot.classList.add(colorClass);
+                }
+            });
+            wrapper.querySelectorAll('.neon-dot-tone').forEach(dot => {
+                let isLit = parseFloat(dot.dataset.percent) <= percentage;
+
+                dot.classList.remove('lit', 'color-green', 'color-blue', 'color-red', 'color-orange');
+
+                if (isLit) {
+                    dot.classList.add('lit');
+                    dot.classList.add(colorClass);
                 }
             });
         }
@@ -1082,11 +1188,21 @@
             updateUIState();
         }
 
+        function initNeonDots() {
+            const mainWrapperEl = document.getElementById('knobWrapper');
+            const bassWrapperEl = document.getElementById('bassWrapper');
+
+            if (mainWrapperEl && bassWrapperEl) {
+                createNeonDotsForWrapper('knobWrapper', mainWrapperEl.offsetWidth * 0.425, mainWrapperEl.offsetWidth / 2, mainWrapperEl.offsetHeight / 2, false);
+                createNeonDotsForWrapper('bassWrapper', bassWrapperEl.offsetWidth * 0.4, bassWrapperEl.offsetWidth / 2, bassWrapperEl.offsetHeight / 2, true);
+                createNeonDotsForWrapper('trebleWrapper', bassWrapperEl.offsetWidth * 0.4, bassWrapperEl.offsetWidth / 2, bassWrapperEl.offsetHeight / 2, true);
+                createNeonDotsForWrapper('subWrapper', bassWrapperEl.offsetWidth * 0.4, bassWrapperEl.offsetWidth / 2, bassWrapperEl.offsetHeight / 2, true);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            createNeonDotsForWrapper('knobWrapper', 54, 65, 65);
-            createNeonDotsForWrapper('bassWrapper', 34, 40, 40);
-            createNeonDotsForWrapper('trebleWrapper', 34, 40, 40);
-            createNeonDotsForWrapper('subWrapper', 34, 40, 40);
+            initNeonDots();
+            window.addEventListener('resize', initNeonDots);
 
             const ipInput = document.getElementById('ipAddress');
             if (ipInput) {
@@ -1256,6 +1372,10 @@
             }
         });
 
+        ipcRenderer.on('global-volume-adjust', (event, delta) => {
+            changeVolStep(delta);
+        });
+
         let volHoldInterval = null;
 
         function startVolHold(deltaDb) {
@@ -1286,14 +1406,14 @@
         let time = 0;
 
         const waves = [
-            { speed: 0.015, amplitude: 40, color: 'rgba(33, 150, 243, 0.6)' }, // blue
-            { speed: 0.02, amplitude: 30, color: 'rgba(255, 87, 34, 0.5)' },   // orange
-            { speed: 0.01, amplitude: 50, color: 'rgba(76, 175, 80, 0.4)' }    // green
+            { speed: 0.015, amplitude: 20, color: 'rgba(33, 150, 243, 0.6)' }, // blue
+            { speed: 0.02, amplitude: 15, color: 'rgba(255, 87, 34, 0.5)' },   // orange
+            { speed: 0.01, amplitude: 25, color: 'rgba(76, 175, 80, 0.4)' }    // green
         ];
 
         function resizeCanvas() {
             waveCanvas.width = waveCanvas.parentElement.offsetWidth;
-            waveCanvas.height = waveCanvas.parentElement.offsetHeight;
+            waveCanvas.height = Math.max(12, waveCanvas.parentElement.offsetHeight - 2);
         }
 
         function drawWaves() {
@@ -1305,7 +1425,7 @@
 
             waves.forEach(wave => {
                 waveCtx.beginPath();
-                waveCtx.lineWidth = 3;
+                waveCtx.lineWidth = 1;
                 waveCtx.strokeStyle = wave.color;
                 waveCtx.moveTo(0, centerY);
 
@@ -1407,12 +1527,21 @@
                     const isNone = !statusValue || statusValue.toLowerCase() === 'none';
                     result[key] = !isNone;
                 } catch (error) {
-                    console.error(`Грешка при четене на канал ${key}:`, error);
+                    console.error(`Error in getSpeakerConfig. Channel ${key}:`, error);
                     result[key] = false;
                 }
             }
 
             return result;
+        }
+
+        function changeZoom(delta) {
+            try {
+                const { ipcRenderer } = require('electron');
+                if (ipcRenderer) {
+                    ipcRenderer.send('change-zoom', delta);
+                }
+            } catch (e) { }
         }
     </script>
 
