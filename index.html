@@ -30,6 +30,46 @@
             user-select: none;
         }
 
+        body.window-unlocked .container {
+            cursor: grab !important;
+        }
+
+        body.window-unlocked .container.is-dragging {
+            cursor: grabbing !important;
+        }
+
+        body.window-unlocked button,
+        #refreshBtn,
+        #unlockBtn,
+        #zoomMinus,
+        #zoomPlus {
+            cursor: pointer !important;
+        }
+
+        body.window-unlocked input[type="text"] {
+            cursor: text !important;
+        }
+
+        body.window-unlocked .knob-wrapper {
+            cursor: ns-resize !important;
+        }
+
+        #refreshBtn, #unlockBtn, #zoomMinus, #zoomPlus {
+            position: fixed;
+            z-index: 9999;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        button {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        button span {
+            pointer-events: none;
+        }
+
         .container {
             width: 100%;
             height: 100vh;
@@ -324,57 +364,6 @@
             font-size: clamp(9px, 1.1vh, 10px);
         }
 
-        #customTitleBar {
-            display: none;
-            height: 22px;
-            background: #181818;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 6px;
-            -webkit-app-region: drag;
-            border-bottom: 1px solid #333;
-            margin: -8px -12px 6px -12px;
-        }
-
-        #customTitleBar.unlocked {
-            display: flex;
-        }
-
-        .title-text {
-            font-size: 10px;
-            color: var(--accent);
-            font-weight: bold;
-        }
-
-        .window-controls {
-            display: flex;
-            gap: 2px;
-        }
-
-        .window-controls button {
-            -webkit-app-region: no-drag;
-            background: transparent;
-            border: none;
-            color: #aaa;
-            width: 18px;
-            height: 18px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 9px;
-            margin: 0;
-            padding: 0;
-        }
-
-        .window-controls button:hover {
-            background: #333;
-            color: #fff;
-        }
-
-        .window-controls button.close-btn:hover {
-            background: #e81123;
-            color: #fff;
-        }
-
         .neon-dot.lit.color-green {
             background-color: #4caf50;
             box-shadow: 0 0 4px #4caf50, 0 0 6px #4caf50;
@@ -406,74 +395,86 @@
         }
 
         #refreshBtn {
-            position: fixed;
             top: 4px;
             right: 4px;
-            z-index: 9999;
-            background: rgba(30, 30, 30, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: #2a2a2a;
+            border: 1px solid #444;
             color: #fff;
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
-            backdrop-filter: blur(3px);
+            font-size: 11px;
         }
 
         #refreshBtn:hover {
-            background: rgba(50, 50, 50, 1);
+            background: #444;
+            border-color: var(--accent);
+        }
+
+        #unlockBtn {
+            top: 4px;
+            right: 28px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            color: #fff;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+        }
+
+        #unlockBtn:hover {
+            background: #444;
             border-color: var(--accent);
         }
 
         #zoomMinus {
-            position: fixed;
             top: 4px;
             left: 4px;
-            z-index: 9999;
-            background: rgba(30, 30, 30, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: #2a2a2a;
+            border: 1px solid #444;
             color: #fff;
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
-            backdrop-filter: blur(3px);
+            font-size: 11px;
         }
 
         #zoomMinus:hover {
-            background: rgba(50, 50, 50, 1);
+            background: #444;
             border-color: var(--accent);
         }
 
         #zoomPlus {
-            position: fixed;
             top: 4px;
-            left: 24px;
-            z-index: 9999;
-            background: rgba(30, 30, 30, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            left: 28px;
+            background: #2a2a2a;
+            border: 1px solid #444;
             color: #fff;
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
-            backdrop-filter: blur(3px);
+            font-size: 11px;
         }
 
         #zoomPlus:hover {
-            background: rgba(50, 50, 50, 1);
+            background: #444;
             border-color: var(--accent);
         }
 
@@ -481,23 +482,24 @@
         #channelOut {
             font-size: clamp(9px, 1.2vh, 11px);
         }
+
+        .power-off-disabled {
+            opacity: 0.35;
+            pointer-events: none !important;
+            filter: grayscale(100%);
+            transition: opacity 0.3s ease, filter 0.3s ease;
+        }
     </style>
 </head>
 
 <body>
 
-    <div class="container">
-        <button id="refreshBtn" onclick="location.reload()" title="Refresh Page (Ctrl+R)">↻</button>
-        <button id="zoomMinus" onclick="changeZoom(-0.1)" title="Zoom out (Ctrl+Shift+-)">-</button>
-        <button id="zoomPlus" onclick="changeZoom(0.1)" title="Zoom in (Ctrl++)">+</button>
-        <div id="customTitleBar">
-            <span class="title-text">Yamaha RX-V6A (Unlocked)</span>
-            <div class="window-controls">
-                <button onclick="require('electron').ipcRenderer.send('window-min')">🗕</button>
-                <button onclick="require('electron').ipcRenderer.send('window-max')">🗖</button>
-                <button class="close-btn" onclick="require('electron').ipcRenderer.send('window-close')">✕</button>
-            </div>
-        </div>
+    <button id="refreshBtn" onclick="location.reload()" title="Refresh Page (Ctrl+R)"><span>↻</span></button>
+    <button id="unlockBtn" onclick="toggleLock()" title="Unlock Window"><span>🔒</span></button>
+    <button id="zoomMinus" onclick="changeZoom(-0.1)" title="Zoom out (Ctrl+Shift+-)"><span>-</span></button>
+    <button id="zoomPlus" onclick="changeZoom(0.1)" title="Zoom in (Ctrl++)"><span>+</span></button>
+
+    <div class="container" id="mainContainer">
 
         <h2>Yamaha RX-V6A</h2>
         <div class="section">
@@ -505,7 +507,7 @@
         </div>
 
         <div class="section">
-            <button class="power-btn" onclick="sendCmd('main/setPower?power=on')">Power On</button>
+            <button id="btnPowerOn" class="power-btn" onclick="sendCmd('main/setPower?power=on')">Power On</button>
             <button class="power-btn" onclick="sendCmd('main/setPower?power=standby')">Power Off</button>
         </div>
 
@@ -1030,6 +1032,7 @@
             sendXmlCmd(xml);
         }
 
+        let isPoweredOn = false;
         function fetchStatusJson() {
             if (isInteractingVol) return;
             const ip = document.getElementById('ipAddress').value.trim();
@@ -1039,54 +1042,65 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data && data.response_code === 0) {
-                        isMuted = data.mute;
-                        if (!isInteractingInput) currentInput = data.input;
-                        if (!isInteractingDsp) {
-                            isPureDirect = data.pure_direct || false;
-                            currentDsp = data.sound_program;
+                        isPoweredOn = (data.power === 'on');
+                        setUIPowerState(isPoweredOn);
+
+                        if (isPoweredOn) {
+                            isMuted = data.mute;
+                            if (!isInteractingInput) currentInput = data.input;
+                            if (!isInteractingDsp) {
+                                isPureDirect = data.pure_direct || false;
+                                currentDsp = data.sound_program;
+                            }
+                            currentDb = snapToStep(yamahaToDb(data.volume));
+                            updateKnobVisual(currentDb);
+                            updateUIState();
                         }
-                        currentDb = snapToStep(yamahaToDb(data.volume));
-                        updateKnobVisual(currentDb);
-                        updateUIState();
                     }
                 })
-                .catch(() => { });
-
-            fetch(`http://${ip}/YamahaExtendedControl/v1/main/getSignalInfo`, { cache: 'no-store' })
-                .then(res => res.json())
-                .then(data => {
-                    const badge = document.getElementById('signalInfoBadge');
-
-                    if (data && data.response_code === 0 && data.audio && data.audio.format && data.audio.format !== "---") {
-                        let format = data.audio.format.toUpperCase();
-                        let fsVal = data.audio.fs;
-
-                        if (fsVal !== undefined && fsVal !== null && fsVal !== "" && fsVal !== "---") {
-                            let fsStr = String(fsVal).trim();
-                            if (!fsStr.toLowerCase().includes('khz') && !fsStr.toLowerCase().includes('hz')) {
-                                let num = parseFloat(fsStr);
-                                if (!isNaN(num)) {
-                                    fsStr = (num > 1000 ? num / 1000 : num).toFixed(1).replace('.0', '') + " kHz";
-                                }
-                            }
-                            signalTextDisplay = `${format} ${fsStr}`;
-                        } else {
-                            signalTextDisplay = format;
-                        }
-
-                        if (badge) badge.classList.remove('no-signal');
-                    } else {
-                        signalTextDisplay = "NO SIGNAL";
-                        if (badge) badge.classList.add('no-signal');
-                    }
-                }).catch(() => {
-                    signalTextDisplay = "NO SIGNAL";
-                    const badge = document.getElementById('signalInfoBadge');
-                    if (badge) badge.classList.add('no-signal');
+                .catch(() => {
+                    isPoweredOn = false;
+                    setUIPowerState(isPoweredOn);
                 });
+
+            if (isPoweredOn) {
+                fetch(`http://${ip}/YamahaExtendedControl/v1/main/getSignalInfo`, { cache: 'no-store' })
+                    .then(res => res.json())
+                    .then(data => {
+                        const badge = document.getElementById('signalInfoBadge');
+
+                        if (data && data.response_code === 0 && data.audio && data.audio.format && data.audio.format !== "---") {
+                            let format = data.audio.format.toUpperCase();
+                            let fsVal = data.audio.fs;
+
+                            if (fsVal !== undefined && fsVal !== null && fsVal !== "" && fsVal !== "---") {
+                                let fsStr = String(fsVal).trim();
+                                if (!fsStr.toLowerCase().includes('khz') && !fsStr.toLowerCase().includes('hz')) {
+                                    let num = parseFloat(fsStr);
+                                    if (!isNaN(num)) {
+                                        fsStr = (num > 1000 ? num / 1000 : num).toFixed(1).replace('.0', '') + " kHz";
+                                    }
+                                }
+                                signalTextDisplay = `${format} ${fsStr}`;
+                            } else {
+                                signalTextDisplay = format;
+                            }
+
+                            if (badge) badge.classList.remove('no-signal');
+                        } else {
+                            signalTextDisplay = "NO SIGNAL";
+                            if (badge) badge.classList.add('no-signal');
+                        }
+                    }).catch(() => {
+                        signalTextDisplay = "NO SIGNAL";
+                        const badge = document.getElementById('signalInfoBadge');
+                        if (badge) badge.classList.add('no-signal');
+                    });
+            }
         }
 
         function fetchToneXml() {
+            if (!isPoweredOn) return;
             if (isInteractingBass && isInteractingTreble && isInteractingSub) return;
             const ip = document.getElementById('ipAddress').value.trim();
             if (!isValidIp(ip)) return;
@@ -1136,6 +1150,8 @@
         }
 
         function updateChannelOut() {
+            if (!isPoweredOn) return;
+
             const label = document.getElementById('channelOut');
             if (signalTextDisplay !== "NO SIGNAL") {
                 getSpeakerConfig().then(speakers => {
@@ -1200,8 +1216,51 @@
             }
         }
 
+        let isDraggingWindow = false;
+        let startMouseX = 0;
+        let startMouseY = 0;
+
+        function initWindowDrag() {
+            const containerEl = document.getElementById('mainContainer');
+
+            containerEl.addEventListener('mousedown', (e) => {
+                if (!document.body.classList.contains('window-unlocked')) return;
+
+                if (e.target.closest('button, input, .knob-wrapper, canvas, #refreshBtn, #unlockBtn, #zoomMinus, #zoomPlus')) {
+                    return;
+                }
+
+                isDraggingWindow = true;
+                startMouseX = e.screenX;
+                startMouseY = e.screenY;
+                containerEl.classList.add('is-dragging');
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isDraggingWindow) return;
+
+                const deltaX = e.screenX - startMouseX;
+                const deltaY = e.screenY - startMouseY;
+                startMouseX = e.screenX;
+                startMouseY = e.screenY;
+
+                try {
+                    const { ipcRenderer } = require('electron');
+                    ipcRenderer.send('move-window', { deltaX, deltaY });
+                } catch (err) { }
+            });
+
+            window.addEventListener('mouseup', () => {
+                if (isDraggingWindow) {
+                    isDraggingWindow = false;
+                    document.getElementById('mainContainer').classList.remove('is-dragging');
+                }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             initNeonDots();
+            initWindowDrag();
             window.addEventListener('resize', initNeonDots);
 
             const ipInput = document.getElementById('ipAddress');
@@ -1359,18 +1418,6 @@
         }
 
         const { ipcRenderer } = require('electron');
-        ipcRenderer.on('toggle-lock', (event, unlocked) => {
-            const titleBar = document.getElementById('customTitleBar');
-            const refreshBtn = document.getElementById('refreshBtn');
-
-            if (unlocked) {
-                titleBar.classList.add('unlocked');
-                if (refreshBtn) refreshBtn.style.display = 'none';
-            } else {
-                titleBar.classList.remove('unlocked');
-                if (refreshBtn) refreshBtn.style.display = 'flex';
-            }
-        });
 
         ipcRenderer.on('global-volume-adjust', (event, delta) => {
             changeVolStep(delta);
@@ -1477,10 +1524,6 @@
 
         reconnectInterval = setInterval(checkAndReconnectAudio, 3000);
 
-        ipcRenderer.on('global-volume-adjust', (event, delta) => {
-            changeVolStep(delta);
-        });
-
         async function getSpeakerConfig() {
             const ip = document.getElementById('ipAddress').value.trim();
             const url = `http://${ip}/YamahaRemoteControl/ctrl`;
@@ -1541,6 +1584,56 @@
                 if (ipcRenderer) {
                     ipcRenderer.send('change-zoom', delta);
                 }
+            } catch (e) { }
+        }
+
+        function setUIPowerState(isOn) {
+            const btnPowerOn = document.getElementById('btnPowerOn');
+            const elementsToToggle = document.querySelectorAll(
+                'button:not(#btnPowerOn):not(#zoomPlus):not(#zoomMinus):not(#refreshBtn):not(#unlockBtn), input:not(#ipAddress), .knob-wrapper, .tone-card, .dsp-grid, .visualizer-container'
+            );
+
+            elementsToToggle.forEach(el => {
+                if (isOn) {
+                    el.classList.remove('power-off-disabled');
+                    if (el.tagName === 'BUTTON' || el.tagName === 'INPUT') {
+                        el.disabled = false;
+                    }
+                } else {
+                    el.classList.add('power-off-disabled');
+                    if (el.tagName === 'BUTTON' || el.tagName === 'INPUT') {
+                        el.disabled = true;
+                    }
+                }
+            });
+
+            if (btnPowerOn) {
+                btnPowerOn.disabled = isOn;
+                if (isOn) {
+                    btnPowerOn.classList.add('power-off-disabled');
+                } else {
+                    btnPowerOn.classList.remove('power-off-disabled');
+                }
+            }
+        }
+
+        function toggleLock() {
+            const btn = document.getElementById('unlockBtn');
+            const isCurrentlyLocked = btn.textContent.includes('🔒');
+
+            if (isCurrentlyLocked) {
+                btn.innerHTML = '<span>🔓</span>';
+                btn.title = 'Lock Window';
+                document.body.classList.add('window-unlocked');
+            } else {
+                btn.innerHTML = '<span>🔒</span>';
+                btn.title = 'Unlock Window';
+                document.body.classList.remove('window-unlocked');
+            }
+
+            try {
+                const { ipcRenderer } = require('electron');
+                ipcRenderer.send('toggle-lock', !isCurrentlyLocked);
             } catch (e) { }
         }
     </script>

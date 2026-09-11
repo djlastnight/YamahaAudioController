@@ -83,7 +83,7 @@ function createTray() {
 function updateTrayMenu() {
     const contextMenu = Menu.buildFromTemplate([
         {
-            label: 'Show / Hide',
+            label: 'Show/Hide',
             click: () => {
                 if (mainWindow.isVisible()) {
                     mainWindow.hide();
@@ -91,17 +91,6 @@ function updateTrayMenu() {
                     mainWindow.show();
                     mainWindow.focus();
                 }
-            }
-        },
-        { type: 'separator' },
-        {
-            label: isUnlocked ? '🔒 Lock app' : '🔓 Unlock app',
-            click: () => {
-                isUnlocked = !isUnlocked;
-                mainWindow.setMovable(isUnlocked);
-                mainWindow.setResizable(isUnlocked);
-                mainWindow.webContents.send('toggle-lock', isUnlocked);
-                updateTrayMenu();
             }
         },
         { type: 'separator' },
@@ -133,10 +122,24 @@ ipcMain.on('change-zoom', (event, delta) => {
         mainWindow.webContents.setZoomLevel(currentLevel + levelDelta);
     }
 });
+ipcMain.on('toggle-lock', () => {
+    isUnlocked = !isUnlocked;
+    mainWindow.setMovable(isUnlocked);
+    mainWindow.setResizable(isUnlocked);
+})
+ipcMain.on('move-window', (event, { deltaX, deltaY }) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (win) {
+        const [x, y] = win.getPosition();
+        win.setPosition(x + deltaX, y + deltaY);
+    }
+});
 
 app.whenReady().then(() => {
     createWindow();
     createTray();
+    mainWindow.setMovable(false);
+    mainWindow.setResizable(false);
     session.defaultSession.setDisplayMediaRequestHandler((request, callback) => {
         desktopCapturer.getSources({ types: ['screen', 'window'] }).then((sources) => {
             callback({ video: sources[0], audio: 'loopback' });
